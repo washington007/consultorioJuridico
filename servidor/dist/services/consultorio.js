@@ -14,12 +14,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.vicularUsuarioBD = exports.getListarConsultorioByLoginId = exports.getConsultorio = void 0;
 const consultorio_1 = __importDefault(require("../models/consultorio"));
-//import Consultorio, { IConsultorioAttributes } from '../models/consultorio';
 //!TODO
-const getConsultorio = (req, res, LoginId, activo) => __awaiter(void 0, void 0, void 0, function* () {
+const getConsultorio = (req, res, id_consultorio, activo) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        const consultorio = yield consultorio_1.default.findOne({ where: { LoginId } });
+        const consultorio = yield consultorio_1.default.findOne({ where: { id_consultorio } });
         return consultorio;
     }
     catch (error) {
@@ -27,6 +26,7 @@ const getConsultorio = (req, res, LoginId, activo) => __awaiter(void 0, void 0, 
     }
 });
 exports.getConsultorio = getConsultorio;
+//!Esta parte ya no se implementa el LoginId
 const getListarConsultorioByLoginId = (res, req, LoginId) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         console.log('LoginId', LoginId);
@@ -41,13 +41,14 @@ const getListarConsultorioByLoginId = (res, req, LoginId) => __awaiter(void 0, v
     }
 });
 exports.getListarConsultorioByLoginId = getListarConsultorioByLoginId;
-//!
-const vicularUsuarioBD = (res, LoginId, idconsultorios) => __awaiter(void 0, void 0, void 0, function* () {
-    const consultorios = yield consultorio_1.default.findByPk(idconsultorios);
+const vicularUsuarioBD = (res, id_consultorio) => __awaiter(void 0, void 0, void 0, function* () {
+    // export const vicularUsuarioBD = async (res: Response, LoginId:string, idconsultorios:string) => {
+    const consultorios = yield consultorio_1.default.findByPk(id_consultorio);
     if (!consultorios) {
         return res.status(404).json({ message: 'Consultorio no encontrado' });
     }
-    yield consultorios.update({ LoginId });
+    yield consultorios.update({});
+    //await consultorios.update({LoginId})
     res.status(200).json(consultorios);
 });
 exports.vicularUsuarioBD = vicularUsuarioBD;

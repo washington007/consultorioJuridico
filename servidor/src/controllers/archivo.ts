@@ -1,28 +1,28 @@
 import { Request, Response } from "express";
-import { createListararchivo, getListararchivosByConsultorioId} from "../services/listararchivo";
-import { putListarArchivo } from "../services/listararchivo";
+import { createListararchivo, getListararchivosByConsultorioId} from "../services/archivo";
+import { putListarArchivo } from "../services/archivo";
 const nodeMailer = require('nodemailer');
+import XLSX from 'xlsx';
 
 export const getListararchivo = async (req: Request, res: Response) => {
-    //const { busqueda, nombres, fecha, opcion, correo, ConsultorioId } = req.body;
     const { busqueda, nombres, fecha, opcion, correo} = req.body;
     const file = req.file
-
     if (!file) {
-        return res.status(400).json({ msg: 'No se ha proporcionado un archivo en formato base64.' });
+        return res.status(400).json({ msg: 'No se ha proporcionado un archivo Excell' });
     }
+        
     const transporter = nodeMailer.createTransport({
         host:'mail.defensoria.gob.ec',
         port:25,
         secure:false,
         auth:{
-            user:'',
-            pass:''
+            user:'wpilco@defensoria.gob.ec',
+            pass:'Zoquet2hñ.ñ'
         }
     });
     
     const mailOptions = {
-        from:'',
+        from:'wpilco@defensoria.gob.ec',
         to: correo,
         subject:'Correo de Prueba',
         text:`"Hemos tenido el placer de recibir información sobre lo siguiente:" \n\nBuscador: ${busqueda}\nNombres: ${nombres}\nFecha: ${fecha}\nOpción: ${opcion}`,
@@ -44,20 +44,10 @@ export const getListararchivo = async (req: Request, res: Response) => {
         });
     }catch (error){
         return res.status(500).json({
-            msg: 'Hubo un error al enviar la informacion',
+            msg: 'Hubo un error al enviar la informacion',error:error,
         });
     }    
 };
-
-export const getListararchivosControllers = async(req: Request, res: Response) => {
-    const {ConsultorioId} = req.params;
-    console.log(ConsultorioId);
-    
-    const archivos = await getListararchivosByConsultorioId(res, +ConsultorioId);
-    return res.status(200).json({
-        archivos
-    });
-}
 
 //AGREGE ESTA PARTE TOMAR EN CONSIDERACION 
 export const listararchivoUpdate = async (req: Request, res: Response) =>{
@@ -78,13 +68,14 @@ export const listararchivoUpdate = async (req: Request, res: Response) =>{
             port:25,
             secure:false,
             auth:{
-                user:'',
-                pass:''
+                user:'wpilco@defensoria.gob.ec',
+                pass:'Zoquet2hñ.ñ'
             }
         });
+        
             
         const mailOptions = {
-            from:'',
+            from:'wpilco@defensoria.gob.ec',
             to: correo,
             subject:'Correo de Prueba Actualizacion',
             text:`"Hemos tenido el placer de Actualizar su información:" \n\nBuscador: ${busqueda}\nNombres: ${nombres}\nFecha: ${fecha}\nOpción: ${opcion}`,
@@ -116,4 +107,3 @@ export const listararchivoUpdate = async (req: Request, res: Response) =>{
         res.status(400).json({mensaje: 'Ocurrio un error al Actualizar el archivo'});  
     }
 };
-

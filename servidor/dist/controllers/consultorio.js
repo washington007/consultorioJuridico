@@ -9,42 +9,32 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getListarConsultorioControllers = exports.vincularUsuario = exports.getConsultorioBusqueda = void 0;
+exports.vincularUsuario = exports.getConsultorioBusqueda = void 0;
 const consultorio_1 = require("../services/consultorio");
 const getConsultorioBusqueda = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { LoginId } = req.params;
-    //const {nomenclatura,informacion,activo,LoginId} = req.body;
-    //OJO QUE AGREGE ESTA PARTE
+    const { id_consultorio } = req.params;
     const activo = req.body.activo === req.body;
-    const consultorio = yield (0, consultorio_1.getConsultorio)(req, res, LoginId, activo);
-    //const consultorio = await getConsultorio(req,res,nomenclatura,activo)
+    const consultorio = yield (0, consultorio_1.getConsultorio)(req, res, Number(id_consultorio), activo);
     if (!consultorio) {
         return res.status(400).json({
-            msg: `No existe consultorio: ${LoginId}, Revisa Nuevamente`
+            msg: `No existe consultorio: ${id_consultorio}, Revisa Nuevamente`
         });
     }
     res.status(200).json({ consultorio });
 });
 exports.getConsultorioBusqueda = getConsultorioBusqueda;
+//!CAMBIOS
 const vincularUsuario = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { LoginId, idconsultorios } = req.body;
-    if (!LoginId || !idconsultorios) {
+    const { id_consultorio } = req.body;
+    //const {LoginId,idconsultorios} = req.body;
+    if (!id_consultorio) {
+        //if(!LoginId || !idconsultorio){
         return res.status(400).json({
-            msg: `No existe LoginId: ${LoginId} y no existe consultorio ${idconsultorios}`
+            msg: `No existe consultorio ${id_consultorio}`
+            //msg: `No existe LoginId: ${LoginId} y no existe consultorio ${idconsultorios}`
         });
     }
-    yield (0, consultorio_1.vicularUsuarioBD)(res, LoginId, idconsultorios);
+    //await vicularUsuarioBD(res, LoginId, idconsultorios);
+    yield (0, consultorio_1.vicularUsuarioBD)(res, id_consultorio);
 });
 exports.vincularUsuario = vincularUsuario;
-//!
-const getListarConsultorioControllers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { LoginId } = req.params;
-    console.log(LoginId);
-    //const consultorios = await getListarConsultorioByLoginId(res, +LoginId);
-    const consultorios = yield (0, consultorio_1.getListarConsultorioByLoginId)(res, req, +LoginId);
-    return res.status(200).json({
-        consultorios
-    });
-});
-exports.getListarConsultorioControllers = getListarConsultorioControllers;
-//!

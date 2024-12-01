@@ -5,9 +5,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_1 = require("sequelize");
 const connection_1 = __importDefault(require("../db/connection"));
+const consultorio_1 = __importDefault(require("./consultorio"));
 //const Usuario: ModelDefined<ILoginAttributes, ILoginCreationAttributes> = sequelize.define('Usuario', {
 const Usuario = connection_1.default.define('Usuario', {
-    idlogins: {
+    id_login: {
         type: sequelize_1.DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true
@@ -29,13 +30,20 @@ const Usuario = connection_1.default.define('Usuario', {
         type: sequelize_1.DataTypes.STRING,
         allowNull: false
     },
-    estado: {
+    activo: {
         type: sequelize_1.DataTypes.BOOLEAN,
         defaultValue: true
     },
     rol: {
-        type: sequelize_1.DataTypes.ENUM('ADMIN_ROLE', 'USER_ROLE'),
-        allowNull: true,
+        type: sequelize_1.DataTypes.STRING,
+        allowNull: false,
+    },
+    id_consultorio: {
+        type: sequelize_1.DataTypes.STRING,
+        references: {
+            model: 'consultorio',
+            key: 'id_consultorio'
+        }
     },
     createdAt: {
         type: sequelize_1.DataTypes.DATE,
@@ -51,5 +59,5 @@ const Usuario = connection_1.default.define('Usuario', {
 });
 //Relaciones
 //Usuario.hasOne(Consultorio, {foreignKey:'LoginId'});
-// Exportar el modelo
+Usuario.belongsTo(consultorio_1.default, { foreignKey: 'id_consultorio' });
 exports.default = Usuario;

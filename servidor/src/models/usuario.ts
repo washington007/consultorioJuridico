@@ -1,22 +1,23 @@
-import { DataTypes, ModelDefined, Optional } from 'sequelize';
+ import { DataTypes, ModelDefined, Optional } from 'sequelize';
 import sequelize from '../db/connection';
 import Consultorio from './consultorio';
 
 interface ILoginAttributes {
   id: number
-  correo: string
-  clave: string
   nombre: string
   apellido: string
+  correo: string
+  clave: string
   activo: boolean
-  idlogins?: string 
+  rol: string
+  id_login?: string 
 }
 
 interface ILoginCreationAttributes extends Optional<ILoginAttributes, 'id'> {}
 //const Usuario: ModelDefined<ILoginAttributes, ILoginCreationAttributes> = sequelize.define('Usuario', {
 const Usuario = sequelize.define('Usuario', {
 
-  idlogins: {
+  id_login: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true
@@ -38,13 +39,20 @@ const Usuario = sequelize.define('Usuario', {
     type: DataTypes.STRING,
     allowNull: false
   },
-  estado: {
+  activo: {
     type: DataTypes.BOOLEAN,
     defaultValue: true
   },
   rol: {
-    type: DataTypes.ENUM('ADMIN_ROLE', 'USER_ROLE'),
-    allowNull: true,
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  id_consultorio: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: 'consultorio',
+      key:'id_consultorio'
+    }
   },
   createdAt: {
     type: DataTypes.DATE,
@@ -61,6 +69,6 @@ const Usuario = sequelize.define('Usuario', {
 
 //Relaciones
 //Usuario.hasOne(Consultorio, {foreignKey:'LoginId'});
+Usuario.belongsTo(Consultorio, { foreignKey: 'id_consultorio' });
  
-// Exportar el modelo
 export default Usuario;

@@ -24,10 +24,16 @@ const storage = multer_1.default.diskStorage({
         cb(null, subCarpeta);
     },
     filename: (req, file, cb) => __awaiter(void 0, void 0, void 0, function* () {
-        const { busqueda, nombres, fecha, opcion, LoginId } = req.body;
-        console.log('multerLoginId', LoginId);
+        const { busqueda, nombres, fecha_hora_ingreso, tipo_archivo, id_login } = req.body;
+        console.log('multerLoginId', id_login);
         //const filename = `${busqueda.originalname}_${fecha.originalname}_${opcion.originalname}.xlsx`;
-        const filename = `${busqueda}_${fecha}_${opcion}_${LoginId}.xlsx`;
+        //Agrege esta parte 
+        let extension = file.originalname.split('.').pop();
+        if (extension !== 'xlsm' && extension !== 'xlsx') {
+            extension = 'xlsx';
+        }
+        const filename = `${busqueda}_${fecha_hora_ingreso}_${tipo_archivo}_${id_login}.${extension}`;
+        console.log('Mensaje', filename, file);
         //const filename = `${busqueda}_${nombres.replace(/"/g,'')}_${fecha}_${opcion}_${file.originalname.replace(/"/g,'')}`
         cb(null, filename);
     })

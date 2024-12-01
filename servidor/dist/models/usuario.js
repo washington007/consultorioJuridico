@@ -6,20 +6,37 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_1 = require("sequelize");
 const connection_1 = __importDefault(require("../db/connection"));
 const consultorio_1 = __importDefault(require("./consultorio"));
-const Archivo = connection_1.default.define('Archivo', {
-    id_archivo: {
+//const Usuario: ModelDefined<ILoginAttributes, ILoginCreationAttributes> = sequelize.define('Usuario', {
+const Usuario = connection_1.default.define('Usuario', {
+    id_login: {
         type: sequelize_1.DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true
     },
-    fecha_hora_ingreso: {
-        type: sequelize_1.DataTypes.DATE,
-    },
-    tipo_archivo: {
+    nombre: {
         type: sequelize_1.DataTypes.STRING,
+        allowNull: false
     },
-    archivo: {
+    apellido: {
         type: sequelize_1.DataTypes.STRING,
+        allowNull: false
+    },
+    correo: {
+        type: sequelize_1.DataTypes.STRING,
+        allowNull: false,
+        unique: true
+    },
+    clave: {
+        type: sequelize_1.DataTypes.STRING,
+        allowNull: false
+    },
+    activo: {
+        type: sequelize_1.DataTypes.BOOLEAN,
+        defaultValue: true
+    },
+    rol: {
+        type: sequelize_1.DataTypes.STRING,
+        allowNull: false,
     },
     id_consultorio: {
         type: sequelize_1.DataTypes.INTEGER,
@@ -35,12 +52,12 @@ const Archivo = connection_1.default.define('Archivo', {
     updatedAt: {
         type: sequelize_1.DataTypes.DATE,
         defaultValue: sequelize_1.DataTypes.NOW
-    },
+    }
 }, {
-    tableName: 'archivo',
+    tableName: 'usuario',
     timestamps: true,
 });
-// Definir la relación con Consultorio
-Archivo.belongsTo(consultorio_1.default, { foreignKey: 'id_consultorio' });
-// Exportar el modelo
-exports.default = Archivo;
+//Relaciones
+//Usuario.hasOne(Consultorio, {foreignKey:'LoginId'});
+Usuario.belongsTo(consultorio_1.default, { foreignKey: 'id_consultorio' });
+exports.default = Usuario;

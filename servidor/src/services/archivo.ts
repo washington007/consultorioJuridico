@@ -1,39 +1,25 @@
 import { Request, Response } from 'express';
-import Listararchivo, { IListarArchivoAttributes } from '../models/listararchivo';
+import Listararchivo, { IListarArchivoAttributes } from '../models/archivo';
 
 export const createListararchivo = async (req: Request, res: Response, filePath: string) => {
   try {
-    const { busqueda, nombres, fecha, opcion, ConsultorioId } = req.body;
-    await Listararchivo.create({ busqueda, nombres, fecha, opcion, file: filePath, ConsultorioId });
+    const { fecha_hora_ingreso, tipo_archivo, archivo, id_consultorio, id_login } = req.body;
+    await Listararchivo.create({ fecha_hora_ingreso, tipo_archivo, archivo: filePath, id_consultorio, id_login});
     console.log('Guardado en base de datos exitoso')
   } catch (error) {
     console.error('Ocurrio un error al guardar en la base de datos ->', error)
   }
 };
 
-export const getListararchivosByConsultorioId = async (res: Response | undefined, ConsultorioId:number):Promise<IListarArchivoAttributes[]> => {
+export const getListararchivosByConsultorioId = async (res: Response | undefined, id_consultorio:number):Promise<IListarArchivoAttributes[]> => {
   try {
-    console.log('ConsultorioId', ConsultorioId);
-    const listararchivos = await Listararchivo.findAll({where: {ConsultorioId}});
+    console.log('id_consultorio', id_consultorio);
+    const listararchivos = await Listararchivo.findAll({where: {id_consultorio}});
     //@ts-ignore
     return listararchivos as IListarArchivoAttributes[];
   } catch (error) {
-    if(res) res.status(500).json({ message: 'Error al obtener los registros', error });
+    if(res) res.status(500).json({ message: 'Error al obtener los registros!!!!!', error });
     return []
-  }
-};
-
-//Tomar en consiedracion que se obtiene un registro por ID
-export const getListararchivo = async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
-    const listararchivo = await Listararchivo.findByPk(id);
-    if (!listararchivo) {
-      return res.status(404).json({ message: 'Registro no encontrado' });
-    }
-    res.status(200).json(listararchivo);
-  } catch (error) {
-    res.status(500).json({ message: 'Error al obtener el registro', error });
   }
 };
 

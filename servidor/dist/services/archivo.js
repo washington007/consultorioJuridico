@@ -16,8 +16,8 @@ exports.deleteListararchivo = exports.putListarArchivo = exports.updateListararc
 const archivo_1 = __importDefault(require("../models/archivo"));
 const createListararchivo = (req, res, filePath) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { busqueda, nombres, fecha, opcion, ConsultorioId } = req.body;
-        yield archivo_1.default.create({ busqueda, nombres, fecha, opcion, file: filePath, ConsultorioId });
+        const { fecha_hora_ingreso, tipo_archivo, archivo, id_consultorio, id_login } = req.body;
+        yield archivo_1.default.create({ fecha_hora_ingreso, tipo_archivo, archivo: filePath, id_consultorio, id_login });
         console.log('Guardado en base de datos exitoso');
     }
     catch (error) {
@@ -25,10 +25,10 @@ const createListararchivo = (req, res, filePath) => __awaiter(void 0, void 0, vo
     }
 });
 exports.createListararchivo = createListararchivo;
-const getListararchivosByConsultorioId = (res, ConsultorioId) => __awaiter(void 0, void 0, void 0, function* () {
+const getListararchivosByConsultorioId = (res, id_consultorio) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        console.log('ConsultorioId', ConsultorioId);
-        const listararchivos = yield archivo_1.default.findAll({ where: { ConsultorioId } });
+        console.log('id_consultorio', id_consultorio);
+        const listararchivos = yield archivo_1.default.findAll({ where: { id_consultorio } });
         //@ts-ignore
         return listararchivos;
     }

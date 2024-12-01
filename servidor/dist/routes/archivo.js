@@ -1,0 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const archivo_1 = require("../controllers/archivo");
+const archivo_2 = require("../controllers/archivo");
+const multer_1 = require("../middlewares/multer");
+const router = (0, express_1.Router)();
+router.post('/', multer_1.upload.single('file'), archivo_1.getListararchivo);
+router.put('/', multer_1.upload.single('file'), archivo_2.listararchivoUpdate);
+exports.default = router;

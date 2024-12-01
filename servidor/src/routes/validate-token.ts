@@ -9,7 +9,7 @@ const validateToken = (req: Request, res: Response, next: NextFunction) =>{
         try{
             const bearerToken = headerToken.slice(7);
             jwt.verify(bearerToken, process.env.SECRET_KEY || 'cisco123');
-            next()
+            next()  
         }catch(eror){
             res.status(401).json({
                 msg: 'token no valido'
