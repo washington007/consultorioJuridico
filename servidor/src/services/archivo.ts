@@ -1,10 +1,25 @@
 import { Request, Response } from 'express';
 import Listararchivo, { IListarArchivoAttributes } from '../models/archivo';
+import { transformarFecha } from '../utils/timeUtils';
+import { listararchivoUpdate } from '../controllers/archivo';
 
 export const createListararchivo = async (req: Request, res: Response, filePath: string) => {
   try {
     const { fecha_hora_ingreso, tipo_archivo, archivo, id_consultorio, id_login } = req.body;
-    await Listararchivo.create({ fecha_hora_ingreso, tipo_archivo, archivo: filePath, id_consultorio, id_login});
+    const archivos = await Listararchivo.findAll({ 
+      where: { fecha_hora_ingreso:transformarFecha(fecha_hora_ingreso), id_consultorio, id_login }
+  });
+  
+  if(archivos.length > 0){
+    Listararchivo.update({ fecha_hora_ingreso:transformarFecha(fecha_hora_ingreso), tipo_archivo, archivo: filePath, id_consultorio, id_login},
+    {
+      where: { fecha_hora_ingreso:transformarFecha(fecha_hora_ingreso), id_consultorio, id_login }
+    }
+    );
+    return
+  }
+    
+    await Listararchivo.create({ fecha_hora_ingreso:transformarFecha(fecha_hora_ingreso), tipo_archivo, archivo: filePath, id_consultorio, id_login});
     console.log('Guardado en base de datos exitoso')
   } catch (error) {
     console.error('Ocurrio un error al guardar en la base de datos ->', error)
@@ -72,6 +87,19 @@ export const deleteListararchivo = async (req: Request, res: Response) => {
     res.status(200).json({ message: 'Registro eliminado correctamente' });
   } catch (error) {
     res.status(500).json({ message: 'Error al eliminar el registro', error });
+  }
+};
+
+export const validarDuplicadoDB = async (fecha_hora_ingreso: string, id_consultorio: string, id_login: string) => {
+  try {
+      const archivo = await Listararchivo.findAll({ 
+          where: { fecha_hora_ingreso:transformarFecha(fecha_hora_ingreso), id_consultorio, id_login }
+      });
+      
+      return archivo.length > 0; // Devuelve true si existen archivos, false si no hay ninguno
+  } catch (error) {
+      console.error('Error al consultar la base de datos:', error);
+      return undefined; // En caso de error, también devolvemos false
   }
 };
 

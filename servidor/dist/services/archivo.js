@@ -12,12 +12,22 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteListararchivo = exports.putListarArchivo = exports.updateListararchivo = exports.getListararchivosByConsultorioId = exports.createListararchivo = void 0;
+exports.validarDuplicadoDB = exports.deleteListararchivo = exports.putListarArchivo = exports.updateListararchivo = exports.getListararchivosByConsultorioId = exports.createListararchivo = void 0;
 const archivo_1 = __importDefault(require("../models/archivo"));
+const timeUtils_1 = require("../utils/timeUtils");
 const createListararchivo = (req, res, filePath) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { fecha_hora_ingreso, tipo_archivo, archivo, id_consultorio, id_login } = req.body;
-        yield archivo_1.default.create({ fecha_hora_ingreso, tipo_archivo, archivo: filePath, id_consultorio, id_login });
+        const archivos = yield archivo_1.default.findAll({
+            where: { fecha_hora_ingreso: (0, timeUtils_1.transformarFecha)(fecha_hora_ingreso), id_consultorio, id_login }
+        });
+        if (archivos.length > 0) {
+            archivo_1.default.update({ fecha_hora_ingreso: (0, timeUtils_1.transformarFecha)(fecha_hora_ingreso), tipo_archivo, archivo: filePath, id_consultorio, id_login }, {
+                where: { fecha_hora_ingreso: (0, timeUtils_1.transformarFecha)(fecha_hora_ingreso), id_consultorio, id_login }
+            });
+            return;
+        }
+        yield archivo_1.default.create({ fecha_hora_ingreso: (0, timeUtils_1.transformarFecha)(fecha_hora_ingreso), tipo_archivo, archivo: filePath, id_consultorio, id_login });
         console.log('Guardado en base de datos exitoso');
     }
     catch (error) {
@@ -88,3 +98,16 @@ const deleteListararchivo = (req, res) => __awaiter(void 0, void 0, void 0, func
     }
 });
 exports.deleteListararchivo = deleteListararchivo;
+const validarDuplicadoDB = (fecha_hora_ingreso, id_consultorio, id_login) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const archivo = yield archivo_1.default.findAll({
+            where: { fecha_hora_ingreso: (0, timeUtils_1.transformarFecha)(fecha_hora_ingreso), id_consultorio, id_login }
+        });
+        return archivo.length > 0; // Devuelve true si existen archivos, false si no hay ninguno
+    }
+    catch (error) {
+        console.error('Error al consultar la base de datos:', error);
+        return undefined; // En caso de error, también devolvemos false
+    }
+});
+exports.validarDuplicadoDB = validarDuplicadoDB;

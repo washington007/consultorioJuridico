@@ -7,4 +7,5 @@ const multer_1 = require("../middlewares/multer");
 const router = (0, express_1.Router)();
 router.post('/', multer_1.upload.single('file'), archivo_1.getListararchivo);
 router.put('/', multer_1.upload.single('file'), archivo_2.listararchivoUpdate);
+router.get('/validarDuplicado', archivo_1.validarDuplicado);
 exports.default = router;

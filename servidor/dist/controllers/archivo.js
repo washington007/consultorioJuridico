@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.listararchivoUpdate = exports.getListararchivo = void 0;
+exports.validarDuplicado = exports.listararchivoUpdate = exports.getListararchivo = void 0;
 const archivo_1 = require("../services/archivo");
 const archivo_2 = require("../services/archivo");
 const nodeMailer = require('nodemailer');
@@ -109,3 +109,20 @@ const listararchivoUpdate = (req, res) => __awaiter(void 0, void 0, void 0, func
     }
 });
 exports.listararchivoUpdate = listararchivoUpdate;
+const validarDuplicado = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { fecha_hora_ingreso, id_consultorio, id_login } = req.query;
+    if (!fecha_hora_ingreso || !id_consultorio || !id_login) {
+        return res.status(400).json({ mensaje: 'Ocurrió un error al validar el duplicado' });
+    }
+    try {
+        const existeDuplicado = yield (0, archivo_1.validarDuplicadoDB)(fecha_hora_ingreso, id_consultorio, id_login);
+        return res.status(200).json({ duplicado: existeDuplicado });
+    }
+    catch (error) {
+        console.error('Error al validar duplicado:', error);
+        return res.status(500).json({
+            mensaje: 'Error interno del servidor'
+        });
+    }
+});
+exports.validarDuplicado = validarDuplicado;

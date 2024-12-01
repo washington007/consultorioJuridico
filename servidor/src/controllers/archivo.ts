@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import { createListararchivo, getListararchivosByConsultorioId} from "../services/archivo";
+import { createListararchivo, getListararchivosByConsultorioId, validarDuplicadoDB} from "../services/archivo";
 import { putListarArchivo } from "../services/archivo";
 const nodeMailer = require('nodemailer');
-import XLSX from 'xlsx';
+
 
 export const getListararchivo = async (req: Request, res: Response) => {
     const { busqueda, nombres, fecha, opcion, correo} = req.body;
@@ -107,3 +107,20 @@ export const listararchivoUpdate = async (req: Request, res: Response) =>{
         res.status(400).json({mensaje: 'Ocurrio un error al Actualizar el archivo'});  
     }
 };
+
+export const validarDuplicado = async (req: Request, res: Response): Promise<Response> => { 
+    const { fecha_hora_ingreso, id_consultorio, id_login } = req.query as { 
+        fecha_hora_ingreso?: string, id_consultorio?: string, id_login?: string 
+    }; 
+    if (!fecha_hora_ingreso || !id_consultorio || !id_login) { 
+        return res.status(400).json({ mensaje: 'Ocurrió un error al validar el duplicado' });
+     } 
+     try { 
+        const existeDuplicado = await validarDuplicadoDB(fecha_hora_ingreso, id_consultorio, id_login); 
+        return res.status(200).json({ duplicado: existeDuplicado }); 
+    } catch (error) { 
+        console.error('Error al validar duplicado:', error); 
+        return res.status(500).json({ 
+            mensaje: 'Error interno del servidor' });
+         } 
+    };
